@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './App.css';
 import Textinput from './components/Textinput';
 import Dropdown from './components/Dropdown';
@@ -62,7 +63,8 @@ function App() {
         <Textinput input='First Name' type='text' value={firstName} onChange={(e) => setFirstName(e.target.value)} />
         <Textinput input='Last Name' type='text' value={lastName} onChange={(e) => setLastName(e.target.value)} />
         <Textinput input='Clock Number' type='number' value={clockNo} onChange={(e) => setClockNo(e.target.value)} />
-        <Dropdown input='unit' value={unitValue} onChange={(e) => setUnitValue(e.target.value)} data={units}/>
+        <Dropdown input='Unit' value={unitValue} onChange={(e) => setUnitValue(e.target.value)} data={units}/>
+        <Link to='/dsc/units/add'><button>Add Unit</button></Link>
         <div>
           <label htmlFor="area">Area: </label>
           <select title="area" name="area" value={areaValue} onChange={(e) => setAreaValue(e.target.value)}>
@@ -74,8 +76,8 @@ function App() {
             })}
           </select>
         </div>
-        <Dropdown input="crew" value={crewValue} onChange={(e) => setCrewValue(e.target.value)} data={crews}/>
-        <input type="submit" value="Submit"/>
+        <Dropdown input="Crew" value={crewValue} onChange={(e) => setCrewValue(e.target.value)} data={crews}/>
+        <input type="submit" value="Add Associate"/>
       </form>
       <div>
       

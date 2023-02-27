@@ -6,6 +6,11 @@ const getUnits = () => {
     return axios.get(baseURL).then(res => res.data);
 };
 
+const newUnit = (newUnit) => {
+    return axios.post(baseURL, newUnit).then(res => res.data);
+}
+
 export default { 
-    getUnits, 
+    getUnits,
+    newUnit
 };

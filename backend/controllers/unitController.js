@@ -6,6 +6,15 @@ const getUnits = asyncHandler(async (req, res) => {
     res.status(200).json(units);
 });
 
+const addUnit = asyncHandler(async (req, res) => {
+    const { name } = req.body;
+
+    const newUnit = await Unit.create({ name });
+
+    res.status(201).json(newUnit);
+});
+
 module.exports = {
     getUnits,
+    addUnit,
 }
