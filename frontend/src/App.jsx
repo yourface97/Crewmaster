@@ -7,6 +7,7 @@ import unitService from './services/units';
 import areaService from './services/areas';
 import crewService from './services/crews';
 import associateService from './services/associates';
+import Tablerow from './components/Tablerow';
 
 function App() {
   const [firstName, setFirstName] = useState('');
@@ -18,6 +19,7 @@ function App() {
   const [areaValue, setAreaValue] = useState('');
   const [crews, setCrews] = useState([]);
   const [crewValue, setCrewValue] = useState('');
+  const [associates, setAssociates] = useState([]);
 
   //Gets all unit data from server
   useEffect(() => {
@@ -34,6 +36,10 @@ function App() {
     crewService.getCrews().then(crews => setCrews(crews));
   },[]);
 
+  useEffect(() => {
+    associateService.getAssociates().then(associates => setAssociates(associates));
+  },[]);
+
   //Adds new associate
   const submit = (e) => {
     e.preventDefault();
@@ -47,7 +53,9 @@ function App() {
       crew: crew[0]._id
     };
 
-    associateService.addAssociate(newAssociate).then(associate => console.log(associate));
+    associateService.addAssociate(newAssociate).then(() => {
+      associateService.getAssociates().then(updatedList => setAssociates(updatedList));
+    });
 
     setFirstName('');
     setLastName('');
@@ -55,6 +63,10 @@ function App() {
     setUnitValue('');
     setAreaValue('');
     setCrewValue('');
+  };
+
+  const deleteAssociate = (id) => {
+    associateService.deleteAssociate(id).then(updatedList => setAssociates(updatedList));
   };
 
   return (
@@ -79,9 +91,23 @@ function App() {
         <Dropdown input="Crew" value={crewValue} onChange={(e) => setCrewValue(e.target.value)} data={crews}/>
         <input type="submit" value="Add Associate"/>
       </form>
-      <div>
-      
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Clock No</th>
+            <th>Name</th>
+            <th>Area</th>
+            <th>Crew</th>
+          </tr>
+        </thead>
+        <tbody>
+          {associates.map(associate => {
+            return(
+              <Tablerow key={associate._id} associate={associate} onClick={() => deleteAssociate(associate._id)}/>
+            )
+          })}
+        </tbody>
+      </table>
     </div>
   )
 }
