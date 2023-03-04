@@ -40,7 +40,7 @@ function App() {
     associateService.getAssociates().then(associates => setAssociates(associates));
   },[]);
 
-  //Adds new associate
+  //Adds new associate, updates associate list, and clears all inputs
   const submit = (e) => {
     e.preventDefault();
     const area = areas.filter(area => area.name === areaValue);
@@ -64,9 +64,60 @@ function App() {
     setAreaValue('');
     setCrewValue('');
   };
-
+  
+  //deletes associate and updates associate list
   const deleteAssociate = (id) => {
     associateService.deleteAssociate(id).then(updatedList => setAssociates(updatedList));
+  };
+
+  //filters associate list by area
+  const areaFilter = (e) => {
+    setAreaValue(e.target.value);
+    
+    if(crewValue === ''){
+      associateService.getAssociates().then(fullList => {
+        let filteredList = fullList.filter(associate => {
+          return associate.area.name === e.target.value;
+        });
+        setAssociates(filteredList);
+      });
+    }
+    else{    
+      associateService.getAssociates().then(fullList => {
+        let crewFilter = fullList.filter(associate => {
+          return associate.crew.name === crewValue;
+        });
+        let filteredList = crewFilter.filter(associate => {
+          return associate.area.name === e.target.value;
+        })
+        setAssociates(filteredList);
+      });
+    };
+  };
+
+  //filters associate list by crew
+  const crewFilter = (e) => {
+    setCrewValue(e.target.value);
+
+    if(areaValue === ''){
+      associateService.getAssociates().then(fullList => {
+        let filteredList = fullList.filter(associate => {
+          return associate.crew.name === e.target.value;
+        })
+        setAssociates(filteredList);
+      });
+    }
+    else{
+      associateService.getAssociates().then(fullList => {
+        let areaFilter = fullList.filter(associate => {
+          return associate.area.name === areaValue;
+        })
+        let filteredList = areaFilter.filter(associate => {
+          return associate.crew.name === e.target.value;
+        });
+        setAssociates(filteredList);
+      });
+    };
   };
 
   return (
@@ -79,7 +130,7 @@ function App() {
         <Link to='/dsc/units/add'><button>Add Unit</button></Link>
         <div>
           <label htmlFor="area">Area: </label>
-          <select title="area" name="area" value={areaValue} onChange={(e) => setAreaValue(e.target.value)}>
+          <select title="area" name="area" value={areaValue} onChange={(e) => areaFilter(e)}>
             <option value=""></option>
             {unitValue.length > 0 && areas.filter(area => {
               return area.unit.name === unitValue
@@ -88,7 +139,7 @@ function App() {
             })}
           </select>
         </div>
-        <Dropdown input="Crew" value={crewValue} onChange={(e) => setCrewValue(e.target.value)} data={crews}/>
+        <Dropdown input="Crew" value={crewValue} onChange={(e) => crewFilter(e)} data={crews}/>
         <input type="submit" value="Add Associate"/>
       </form>
       <table>
