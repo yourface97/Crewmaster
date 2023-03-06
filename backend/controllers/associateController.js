@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Associate = require('../models/associateModel');
 
 const getData = asyncHandler(async (req, res) => {
-    const associates = await Associate.find().populate('area crew');
+    const associates = await Associate.find().populate([{ path:'area crew'},{ path: 'area', populate: {path: 'unit'}}]);
     res.status(200).json(associates);
 });
 

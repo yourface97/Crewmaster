@@ -70,13 +70,39 @@ function App() {
     associateService.deleteAssociate(id).then(updatedList => setAssociates(updatedList));
   };
 
+  //filters associate list by unit
+  const unitFilter = (e) => {
+    setUnitValue(e.target.value);
+    setAreaValue('');
+
+    if(crewValue===''){
+      associateService.getAssociates().then(fullList => {
+        const filteredList = fullList.filter(associate => {
+          return associate.area.unit.name === e.target.value;
+        });
+        setAssociates(filteredList);
+      });
+    }
+    else{
+      associateService.getAssociates().then(fullList => {
+        const crewFilter = fullList.filter(associate => {
+          return associate.crew.name === crewValue;
+        });
+        const filteredList = crewFilter.filter(associate => {
+          return associate.area.unit.name === e.target.value;
+        });
+        setAssociates(filteredList);
+      });
+    };
+  };
+
   //filters associate list by area
   const areaFilter = (e) => {
     setAreaValue(e.target.value);
     
     if(crewValue === ''){
       associateService.getAssociates().then(fullList => {
-        let filteredList = fullList.filter(associate => {
+        const filteredList = fullList.filter(associate => {
           return associate.area.name === e.target.value;
         });
         setAssociates(filteredList);
@@ -84,10 +110,10 @@ function App() {
     }
     else{    
       associateService.getAssociates().then(fullList => {
-        let crewFilter = fullList.filter(associate => {
+        const crewFilter = fullList.filter(associate => {
           return associate.crew.name === crewValue;
         });
-        let filteredList = crewFilter.filter(associate => {
+        const filteredList = crewFilter.filter(associate => {
           return associate.area.name === e.target.value;
         })
         setAssociates(filteredList);
@@ -99,11 +125,22 @@ function App() {
   const crewFilter = (e) => {
     setCrewValue(e.target.value);
 
-    if(areaValue === ''){
+    if(unitValue === ''){
       associateService.getAssociates().then(fullList => {
-        let filteredList = fullList.filter(associate => {
+        const filteredList = fullList.filter(associate => {
           return associate.crew.name === e.target.value;
         })
+        setAssociates(filteredList);
+      });
+    }
+    else if(areaValue === '' && unitValue !== ''){
+      associateService.getAssociates().then(fullList => {
+        const unitFilter = fullList.filter(associate => {
+          return associate.area.unit.name === unitValue;
+        });
+        const filteredList = unitFilter.filter(associate => {
+          return associate.crew.name === e.target.value;
+        });
         setAssociates(filteredList);
       });
     }
@@ -126,7 +163,7 @@ function App() {
         <Textinput input='First Name' type='text' value={firstName} onChange={(e) => setFirstName(e.target.value)} />
         <Textinput input='Last Name' type='text' value={lastName} onChange={(e) => setLastName(e.target.value)} />
         <Textinput input='Clock Number' type='number' value={clockNo} onChange={(e) => setClockNo(e.target.value)} />
-        <Dropdown input='Unit' value={unitValue} onChange={(e) => setUnitValue(e.target.value)} data={units}/>
+        <Dropdown input='Unit' value={unitValue} onChange={(e) => unitFilter(e)} data={units}/>
         <Link to='/dsc/units/add'><button>Add Unit</button></Link>
         <div>
           <label htmlFor="area">Area: </label>
@@ -147,6 +184,7 @@ function App() {
           <tr>
             <th>Clock No</th>
             <th>Name</th>
+            <th>Unit</th>
             <th>Area</th>
             <th>Crew</th>
           </tr>

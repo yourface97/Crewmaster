@@ -3,6 +3,7 @@ const Tablerow = ({ associate, onClick}) => {
     <tr>
         <td>{associate.clockNo}</td>
         <td>{associate.firstName} {associate.lastName}</td>
+        <td>{associate.area.unit.name}</td>
         <td>{associate.area.name}</td>
         <td>{associate.crew.name}</td>
         <td><button onClick={onClick}>Delete</button></td>
